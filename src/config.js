@@ -1,5 +1,5 @@
 module.exports = {
-	secret: 'yourSecretKey',
-	expiresIn: 60,
-	ttl:120
+    secret: 'yourSecretKey',
+    expiresIn: 60,
+    ttl: 120
 }

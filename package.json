@@ -7,16 +7,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "nodemon src/lib/index.js --exec babel-node",
         "build": "babel src -d dist"
-    },
-    "keywords": [
-        "node.js",
-        "rest",
-        "mongodb",
-        "generator",
-        "template",
-        "skeleton",
-        "sequelize"
-    ],
+    },    
     "repository": {
         "type": "git",
         "url": "https://github.com/tMathaiou/express-es6-rest-starter"
