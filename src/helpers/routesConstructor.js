@@ -22,7 +22,7 @@ export default function(app) {
                 app.get(`/api/${data.name}`, data.name, middList, list);
             }
 
-            if (rest) {
+            if (rest && data.options.paranoid) {
                 app.get(`/api/${data.name}/restore`, data.name, middRest, rest);
             }
             if (get) {
