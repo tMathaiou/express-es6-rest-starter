@@ -310,16 +310,16 @@ Creates complex queries from request queries string
   ```bash
   //example
   
-  /api/users?attributes=username,id  //returns only the username 
-  /api/users?relation=profile&profile.attributes=email,id //returns users and from profile only the email field
+  /api/users?attributes=username,id  //returns only the username and the id
+  /api/users?relation=profile&profile.attributes=email,id //returns users and from profile only the email and the id fields
   ```
   
   - **exclude**: exclude table fields comma seperated
   ```bash
   //example
   
-  /api/users?exclude=username,id  //returns only the username 
-  /api/users?relation=profile&profile.exclude=email,id //returns users and from profile only the email field
+  /api/users?exclude=username,id  //returns excludes the username and the id
+  /api/users?relation=profile&profile.exclude=email,id //returns users and from profile excludes the email and the id fields
   ```
   
   - **paranoid**: return soft deleted rows
