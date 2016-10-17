@@ -6,20 +6,20 @@ export function searchQueryCreator(queries, properties) {
     createObj = { search: { $and: [], $or: [] }, relation: [], attributes: [] };
 
     for (let [key, value] of Object.entries(queries)) {
-        query = (queries.like === "true") ? { $like: '%' + queries.search + '%' } : queries.search;
+        query = (queries.like === "true") ? { $like: '%' + value + '%' } : value;
 
         propertiesSearch(key, query, properties, createObj.search.$and);
         propertiesRelation(queries, properties, key, value, createObj.relation);
         sum(properties, key, value, createObj.attributes);
         attributes(key, value, createObj.attributes);
         deletedAt(key, value, createObj.search.$and);
-        propertiesRelationSearchAutoInclude(properties, key, query, createObj.relation);
+        propertiesRelationSearchAutoInclude(properties, key, value, createObj.relation);
     }
 
     querySearch(queries, properties, createObj.search.$or);
     queryFilter(queries, properties, createObj.search.$and);
 
-    if(!createObj.search.$or[0]){
+    if (!createObj.search.$or[0]) {
         delete createObj.search.$or;
     }
 
@@ -62,7 +62,8 @@ function propertiesRelation(queries, properties, key, value, object) {
         });
 
     } else if (key === 'relation' && value !== 'all') {
-        queries.relation.split().map((mod, i) => {
+        queries.relation = (!Array.isArray(queries[key])) ? queries.relation.split() : queries.relation;
+        queries.relation.map((mod, i) => {
             let modelAs = properties.definedRelations.find((x) => x.as === mod);
             if (modelAs) {
 
@@ -104,7 +105,8 @@ function nestedIncludes(queries, name, model, object, previous) {
     for (let [key, value] of Object.entries(queries)) {
         propertiesRelationSearchAutoInclude(table[model.name], key, value, object);
         if (key.indexOf(`${name}.include`) !== -1) {
-            queries[key].split().map((mod, i) => {
+            queries[key] = (!Array.isArray(queries[key])) ? queries[key].split() : queries[key];
+            queries[key].map((mod, i) => {
                 let modelAs = (table[model.name] && table[model.name].definedRelations) ? table[model.name].definedRelations : null;
                 if (modelAs) {
                     const relationModel = modelAs.find((n) => n.as === mod);
@@ -114,7 +116,7 @@ function nestedIncludes(queries, name, model, object, previous) {
                             attributes = (queries[`${previous}${name}.${relationModel.as}.attributes`]) ? queries[`${previous}${name}.${relationModel.as}.attributes`].split(',') : null,
                             exclude = (queries[`${previous}${name}.${relationModel.as}.exclude`]) ? { exclude: queries[`${previous}${name}.${relationModel.as}.exclude`].split(',') } : null;
 
-                        let include = [];                        
+                        let include = [];
 
                         nestedIncludes(queries, `${relationModel.as}`, relationModel, include, `${name}.${relationModel.as}.`);
 
@@ -124,7 +126,7 @@ function nestedIncludes(queries, name, model, object, previous) {
                             attributes: attributes || exclude,
                             include,
                             limit,
-                            required                            
+                            required
                         });
                     }
                 }
@@ -167,11 +169,15 @@ function deletedAt(key, value, object) {
     }
 }
 
-function propertiesRelationSearchAutoInclude(properties, key, query, object) {
+function propertiesRelationSearchAutoInclude(properties, key, query, object) {    
     if (properties.relations) {
         properties.definedRelations.map((pro, i) => {
             if (key.substring(0, key.indexOf('.') != -1 ? key.indexOf('.') : key.length) === pro.as) {
-                let field = key.substr(key.lastIndexOf(".") + 1);
+                let field = key.substr(key.indexOf(".") + 1);                
+                if(field.indexOf('.like') !== -1){                    
+                    field = field.substring(0, field.indexOf('.like'));
+                    query =  { $like: '%' + query + '%' };                    
+                }
                 if (table[pro.name].model[field]) {
                     let index = object.findIndex((n) => n.model === db[pro.name]);
                     if (index !== -1) {
