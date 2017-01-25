@@ -73,8 +73,8 @@ export const users = {
         role: { type: Sequelize.STRING }
     }),
     options: defaultOptions,
-    relations: true,
-    definedRelations: [{ name: 'profiles', type: 'hasOne', foreignKey: 'user_id', as: 'profile' }],
+    relations: false,
+    definedRelations: [],
     controllerGeneric: true,
     filters: [],
     override: {

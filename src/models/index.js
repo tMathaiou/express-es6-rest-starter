@@ -1,5 +1,5 @@
 import { users } from './users';
-import { profiles } from './profiles';
+import { tenants } from './tenants';
 
 
-export { users, profiles };
+export { users, tenants };
